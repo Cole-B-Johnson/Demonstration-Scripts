@@ -1,0 +1,7 @@
+﻿Depth,Chemistry (enter in format compound; compound; …),Void Fraction,Particle Size Distribution (enter in format compound: #; compound2: #; ...),Latitude,Longitude
+2,aa; ab; ac,1,aa: 1; ab: 2,13900,10700
+10,ba; bb,10,aa: 5; ab: 10,,
+15,ca; cb; cc; cd,3,aa: 5; bc: 2; cc: 1,,
+49,da,5,aa: 5; bb: 6; cc: 7,,
+50,da,200,aa: 5; bb: 10; cc: 7,,
+51,dd,200,aa: 5; bb: 11; cc: 7,,
