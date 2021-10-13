@@ -687,7 +687,7 @@ def distance(x1, y1, x2, y2):
     return d
 
 # CREATING IDW FUNCTION
-def idw_npoint(xz, yz, n_point, p, x, y, z):
+def idw_xpoint(xz, yz, n_point, p, x, y, z):
     r = 10  # block radius iteration distance
     nf = 0
     counter = 0
@@ -777,7 +777,7 @@ for i in range(n):
     z_idw_list = []
     for j in range(n):
         xz = xt_init + wn * j
-        z_idw = idw_npoint(xz, yz, 5, 1.5, xterrain, yterrain, zterrain)  # min. point=5, p=1.5
+        z_idw = idw_xpoint(xz, yz, 5, 1.5, xterrain, yterrain, zterrain)  # min. point=5, p=1.5
         z_idw_list.append(z_idw)
     z_terrain.append(z_idw_list)
 
@@ -824,7 +824,7 @@ for setofpoints in geocores.values():
         z_idw_list = []
         for j in range(n):
             xz = x_init + wn * j
-            z_idw = idw_npoint(xz, yz, 5, 1.5, x, y, z)  # min. point=5, p=1.5
+            z_idw = idw_xpoint(xz, yz, 5, 1.5, x, y, z)  # min. point=5, p=1.5
             z_idw_list.append(z_idw)
         z_new_list = []
         for ele in range(len(z_idw_list)):
@@ -1185,77 +1185,7 @@ def generateAllEvacuationData():
         finRates.append(generateRatesOverTime(ele[2]))
     return finRates, finVolume, finC
 
-# CREATING IDW FUNCTION
-def idw_npoint(xz, yz, n_point, p):
-    r = 10  # block radius iteration distance
-    nf = 0
-    while nf <= n_point:  # will stop when np reaching at least n_point
-        x_block = []
-        y_block = []
-        z_block = []
-        r += 10  # add 10 unit each iteration
-        xr_min = xz - r
-        xr_max = xz + r
-        yr_min = yz - r
-        yr_max = yz + r
-        for i in range(len(x)):
-            # condition to test if a point is within the block
-            if ((x[i] >= xr_min and x[i] <= xr_max) and (y[i] >= yr_min and y[i] <= yr_max)):
-                x_block.append(x[i])
-                y_block.append(y[i])
-                z_block.append(z[i])
-        nf = len(x_block)  # calculate number of point in the block
-
-    # calculate weight based on distance and p value
-    w_list = []
-    for j in range(len(x_block)):
-        d = distance(xz, yz, x_block[j], y_block[j])
-        if d > 0:
-            w = 1 / (d ** p)
-            w_list.append(w)
-            z0 = 0
-        else:
-            w_list.append(0)  # if meet this condition, it means d<=0, weight is set to 0
-
-    # check if there is 0 in weight list
-    w_check = 0 in w_list
-    if w_check == True:
-        idx = w_list.index(0)  # find index for weight=0
-        z_idw = z_block[idx]  # set the value to the current sample value
-    else:
-        wt = np.transpose(w_list)
-        z_idw = np.dot(z_block, wt) / sum(w_list)  # idw calculation using dot product
-    return z_idw
-
 #--------------------------------------------------  Terrain Estimation Portion  -------------------------------------
-
-# POPULATE INTERPOLATION POINTS
-x_min = min(x)
-x_max = max(x)
-y_min = min(y)
-y_max = max(y)
-w = x_max - x_min  # width
-h = y_max - y_min  # length
-wn = w / n  # x interval
-hn = h / n  # y interval
-
-# list to store interpolation point and elevation
-y_init = y_min
-x_init = x_min
-x_idw_list = []
-y_idw_list = []
-z_head = []
-for i in range(n):
-    xz = x_init + wn * i
-    yz = y_init + hn * i
-    y_idw_list.append(yz)
-    x_idw_list.append(xz)
-    z_idw_list = []
-    for j in range(n):
-        xz = x_init + wn * j
-        z_idw = idw_npoint(xz, yz, 5, 1.5)  # min. point=5, p=1.5
-        z_idw_list.append(z_idw)
-    z_head.append(z_idw_list)
 
 # if not os.path.exists('InjectionAnalysis/General'):
 #     os.makedirs('InjectionAnalysis/General')
