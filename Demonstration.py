@@ -1575,3 +1575,75 @@ def generateAllEvacuationData():
 # # Animate
 # ani = animation.FuncAnimation(fig, animate, init_func=init,
 #                               frames=90, interval=50, blit=True)
+
+def getElevationMap(lonrange, latrange, resolution, graph=False):
+    increment = resolution
+    min_lon, max_lon = lonrange[0], lonrange[1]
+    min_lat, max_lat = latrange[0], latrange[1]
+    xlist = [(min_lat + (i * increment)) for i in range(int(math.ceil((max_lat - min_lat) / increment)))]
+    ylist = [(min_lon + (i * increment)) for i in range(int(math.ceil((max_lon - min_lon) / increment)))]
+    array = []
+    f = min_lon
+    j = 0
+    elev = ""
+    while max_lat >= min_lat:
+        row = []
+        x = str(max_lat)
+        i = 0
+        min_lon = f
+        while min_lon <= max_lon:
+            y = str(min_lon)
+            url = "https://maps.googleapis.com/maps/api/elevation/json?locations=" + x + "%2C" + \
+                  y + "&key=AIzaSyDAGbbVdsFBf31GQXsMNSUR8RxnNpQZFTU"
+            r = requests.get(url)
+            y = json.loads(r.text)
+
+            for result in y["results"]:
+                elev = result["elevation"]
+            row.insert(i, elev)
+            i += 1
+            min_lon += increment
+        array.insert(j, row)
+        j += 1
+        max_lat -= increment
+    zlist = array
+    if graph:
+        try:
+            fig = px.imshow(zlist,
+                            labels=dict(x="Latitude", y="Longitude", color="Altitude"),
+                            x=ylist,
+                            y=xlist
+                            )
+            fig.show()
+        except ValueError:
+            pass
+    return xlist, ylist, zlist
+
+def coordinateList(longitude, latitude):
+    x, y, z = getElevationMap(longitude, latitude, .0001, False)
+    xNew = []
+    yNew = []
+    zNew = []
+
+    i = 0
+    while (i < len(x)):
+        j = 0
+        while (j < len(y)):
+            xNew.insert(j, x[i])
+            yNew.insert(j, y[j])
+            j += 1
+        i += 1
+
+    i = 0
+    while (i < len(z)):
+        j = 0
+        while (j < len(z[i])):
+            zNew.append(z[i][j])
+            j += 1
+        i += 1
+
+    return xNew, yNew, zNew
+
+def highResolutionMap(longitude, latitude):
+    x, y , z = coordinateList(longitude, latitude)
+    return interpolateSurface(x, y, z)
