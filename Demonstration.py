@@ -21,6 +21,27 @@ def distance(x1, y1, x2, y2):
     d = np.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
     return d
 
+def idw_xpoint(x, y, z, xz, yz, n_point, p):
+    r = 10  # block radius iteration distance
+    nf = 0
+    while nf <= n_point:  # will stop when np reaching at least n_point
+        x_block = []
+        y_block = []
+        z_block = []
+        r += 10  # add 10 unit each iteration
+        xr_min = xz - r
+        xr_max = xz + r
+        yr_min = yz - r
+        yr_max = yz + r
+        for i in range(len(x)):
+            # condition to test if a point is within the block
+            if ((x[i] >= xr_min and x[i] <= xr_max) and (y[i] >= yr_min and y[i] <= yr_max)):
+                x_block.append(x[i])
+                y_block.append(y[i])
+                z_block.append(z[i])
+        nf = len(x_block)  # calculate number of point in the block
+
+
 def interpolateSurface(x, y, z, extrapolation_interval=30, mode='cubic', resolutionfororiginal=50):
     # modes: 'nearest', 'linear', 'cubic', 'original'
     if mode != 'original':
@@ -55,30 +76,10 @@ def interpolateSurface(x, y, z, extrapolation_interval=30, mode='cubic', resolut
             z_idw_list = []
             for j in range(n):
                 xz = x_init + wn * j
-                z_idw = idw_npoint(x, y, z, xz, yz, 5, 1.5)  # min. point=5, p=1.5
+                z_idw = idw_xpoint(x, y, z, xz, yz, 5, 1.5)  # min. point=5, p=1.5
                 z_idw_list.append(z_idw)
             z_head.append(z_idw_list)
         return x_idw_list, y_idw_list, z_head
-
-def idw_npoint(x, y, z, xz, yz, n_point, p):
-    r = 10  # block radius iteration distance
-    nf = 0
-    while nf <= n_point:  # will stop when np reaching at least n_point
-        x_block = []
-        y_block = []
-        z_block = []
-        r += 10  # add 10 unit each iteration
-        xr_min = xz - r
-        xr_max = xz + r
-        yr_min = yz - r
-        yr_max = yz + r
-        for i in range(len(x)):
-            # condition to test if a point is within the block
-            if ((x[i] >= xr_min and x[i] <= xr_max) and (y[i] >= yr_min and y[i] <= yr_max)):
-                x_block.append(x[i])
-                y_block.append(y[i])
-                z_block.append(z[i])
-        nf = len(x_block)  # calculate number of point in the block
 
     # calculate weight based on distance and p value
     w_list = []
