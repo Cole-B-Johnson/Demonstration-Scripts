@@ -879,7 +879,7 @@ def generateAllEvacuationData():
     return finRates, finVolume, finC
 
 #--------------------------------------------------  Terrain Estimation Portion  -------------------------------------
-
+import requests
 def getElevationMap(lonrange, latrange, resolution, graph=False):
     increment = resolution
     min_lon, max_lon = lonrange[0], lonrange[1]
