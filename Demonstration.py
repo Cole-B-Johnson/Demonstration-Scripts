@@ -216,38 +216,6 @@ def getAllResistance():
 
 # ------------------------------------------- TO GET 3D MODEL OF UNDERGROUND ------------------------------------------
 
-# GET RESISTANCE OF GIVEN ELEMENT IN 3D MATRIX
-def getResistanceAbove(coordinates):
-    x, y, z = coordinates
-    posofx = 0
-    posofy = 0
-    for ele in range(len(listofx)):
-        if listofx[ele] == x:
-            posofx = ele
-        if listofy[ele] == y:
-            posofy = ele
-
-    correspondingz = {}
-    for ele in range(len(listofz)):
-        correspondingz[listofz[ele][posofx][posofy]] = resistancelayers[ele]
-    maxx = max(list(correspondingz))
-    for ele in correspondingz.keys():
-        if z > ele:
-            continue
-        else:
-            if maxx > ele:
-                maxx = ele
-    return correspondingz[maxx]
-
-
-# SET ALL ELEMENTS IN BASEARRAY TO RESISTANCE MOST DIRECTLY ABOVE
-def setEntireMatrix():
-    for colentry in range(len(basearray)):
-        for row in range(len(basearray[colentry])):
-            for length in range(len(basearray[colentry][row])):
-                basearray[colentry][row][length] = getResistanceAbove((listofx[row], listofy[length],
-                                                                       maxdepth + colentry))
-    return basearray
 
 # ------------------------------------------- TO FIND OPTIMAL DRILLING PATH ------------------------------------------
 
@@ -655,61 +623,6 @@ def distance(x1, y1, x2, y2):
     return z_idw
 
 #--------------------------------------------------  Subterranean Estimation Portion  ----------------------------------
-
-for setofpoints in geocores.values():
-    # POPULATE INTERPOLATION POINTS
-    tf = True
-    for ele in setofpoints:
-        if (ele[2] != 0):
-            tf = False
-    if (tf == True):
-        for ele in geocores.keys():
-            if geocores[ele] == setofpoints:
-                finnn.append(ele)
-        continue
-    x = []
-    y = []
-    z = []
-    for ele in setofpoints:
-        x.append(ele[0])
-        y.append(ele[1])
-        z.append(ele[2])
-
-    x_min = min(xterrain)
-    x_max = max(xterrain)
-    y_min = min(yterrain)
-    y_max = max(yterrain)
-    w = x_max - x_min  # width
-    h = y_max - y_min  # length
-    wn = w / n  # x interval
-    hn = h / n  # y interval
-
-    # list to store interpolation point and elevation
-    y_init = y_min
-    x_init = x_min
-    x_idw_list = []
-    y_idw_list = []
-    z_head = []
-    for i in range(n):
-        xz = x_init + wn * i
-        yz = y_init + hn * i
-        y_idw_list.append(yz)
-        x_idw_list.append(xz)
-        z_idw_list = []
-        for j in range(n):
-            xz = x_init + wn * j
-            z_idw = idw_xpoint(xz, yz, 5, 1.5, x, y, z)  # min. point=5, p=1.5
-            z_idw_list.append(z_idw)
-        z_new_list = []
-        for ele in range(len(z_idw_list)):
-            z_new_list.append(z_terrain[i][ele] - z_idw_list[ele])
-        z_head.append(z_new_list)
-    listofx.append(x_idw_list)
-    listofy.append(y_idw_list)
-    listofz.append(z_head)
-for ele in finnn:
-    del geocores[ele]
-
 
 # 3D TERRAIN MODELLING
 import numpy as np
