@@ -216,15 +216,6 @@ def getAllResistance():
 
 # ------------------------------------------- TO GET 3D MODEL OF UNDERGROUND ------------------------------------------
 
-maxterrain = 0
-for elem in listofz:
-    for eleme in elem:
-        for elemee in eleme:
-            if elemee > maxterrain:
-                maxterrain = elemee
-basearray = [[[0 for elee in range(len(listofx))] for eleee in range(len(listofy))] for eleeee in
-             range(math.ceil(maxterrain - maxdepth))]
-
 # GET RESISTANCE OF GIVEN ELEMENT IN 3D MATRIX
 def getResistanceAbove(coordinates):
     x, y, z = coordinates
