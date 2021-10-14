@@ -558,7 +558,7 @@ def generateAllGeocores():
     return geocoredata
 
 # GENERATE DICTIONARY IN FORM OF {PROFILE: [[LAT, LON, DEPTH]...], ...} FOR ALL PROFS AND ALL MATCHING LOCATIONS
-def generateProfileDictionary(allgeocores = geocoredata):
+def generateProfileDictionary(allgeocores):
     profiles = {}
     for geocore in allgeocores:
         for profs in geocore.averageprofile.values():
