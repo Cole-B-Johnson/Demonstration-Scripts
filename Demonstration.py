@@ -519,12 +519,6 @@ def generateAllDepthsMatching(profile, geocore):
             fin.append(depth)
     return fin
 
-# GENERATE ALL GEOCORES
-def generateAllGeocores():
-    for ele in range(len(surveydata)):
-        geocoredata.append(generateGeocore(ele))
-    return geocoredata
-
 # GENERATE DICTIONARY IN FORM OF {PROFILE: [[LAT, LON, DEPTH]...], ...} FOR ALL PROFS AND ALL MATCHING LOCATIONS
 def generateProfileDictionary(allgeocores):
     profiles = {}
