@@ -990,8 +990,8 @@ def getElevationMap(lonrange, latrange, resolution, graph=False):
         min_lon = f
         while min_lon <= max_lon:
             y = str(min_lon)
-            url = "https://maps.googleapis.com/maps/api/elevation/json?locations=" + x + "%2C" + \
-                  y + "&key=AIzaSyDAGbbVdsFBf31GQXsMNSUR8RxnNpQZFTU"
+            url = "https://api.opentopodata.org/v1/test-dataset?locations=" + x + "," + y
+            time.sleep(1)
             r = requests.get(url)
             y = json.loads(r.text)
 
