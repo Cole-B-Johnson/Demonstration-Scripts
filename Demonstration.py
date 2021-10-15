@@ -926,7 +926,7 @@ def getElevationMap(lonrange, latrange, resolution, graph=False):
     return xlist, ylist, zlist
 
 def coordinateList(longitude, latitude):
-    x, y, z = getElevationMap(longitude, latitude, .0001, False)
+    x, y, z = getElevationMap(longitude, latitude, .0005, False)
     xNew = []
     yNew = []
     zNew = []
