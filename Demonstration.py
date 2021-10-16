@@ -882,6 +882,7 @@ def generateAllEvacuationData():
 
 #--------------------------------------------------  Terrain Estimation Portion  -------------------------------------
 import requests
+from tqdm import tqdm
 def getElevationMap(lonrange, latrange, resolution, graph=False):
     increment = resolution
     min_lon, max_lon = lonrange[0], lonrange[1]
@@ -892,26 +893,30 @@ def getElevationMap(lonrange, latrange, resolution, graph=False):
     f = min_lon
     j = 0
     elev = ""
-    while max_lat >= min_lat:
-        row = []
-        x = str(max_lat)
-        i = 0
-        min_lon = f
-        while min_lon <= max_lon:
-            y = str(min_lon)
-            url = "https://api.opentopodata.org/v1/test-dataset?locations=" + x + "," + y
-            time.sleep(1)
-            r = requests.get(url)
-            y = json.loads(r.text)
-
-            for result in y["results"]:
-                elev = result["elevation"]
-            row.insert(i, elev)
-            i += 1
-            min_lon += increment
-        array.insert(j, row)
-        j += 1
-        max_lat -= increment
+    templ = max_lat
+    ttt = 0
+    while min_lat <= templ:
+      ttt += 1
+      templ -= increment
+    for i in tqdm(range(ttt)):
+      row = []
+      x = str(max_lat)
+      i = 0
+      min_lon = f
+      while min_lon <= max_lon:
+        y = str(min_lon)
+        url = "https://api.opentopodata.org/v1/test-dataset?locations=" + x + "," + y
+        time.sleep(1)
+        r = requests.get(url)
+        y = json.loads(r.text)
+        for result in y["results"]:
+          elev = result["elevation"]
+        row.insert(i, elev)
+        i += 1
+        min_lon += increment
+      array.insert(j, row)
+      j += 1
+      max_lat -= increment
     zlist = array
     if graph:
         try:
@@ -952,4 +957,4 @@ def coordinateList(longitude, latitude):
 
 def highResolutionMap(longitude, latitude):
     x, y , z = coordinateList(longitude, latitude)
-    return interpolateSurface(x, y, z)
+    return x, y, z
